@@ -1,10 +1,11 @@
 """Order management and types."""
 
-from enum import Enum
-from typing import Optional, Dict, Any
-from datetime import datetime
-from pydantic import BaseModel, Field
 import uuid
+from datetime import datetime
+from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel, Field
 
 
 class OrderType(str, Enum):
@@ -43,16 +44,16 @@ class Order(BaseModel):
     side: str = Field(..., pattern="^(BUY|SELL)$")
     quantity: float = Field(gt=0)
     order_type: OrderType = OrderType.MARKET
-    price: Optional[float] = Field(None, gt=0)
-    stop_price: Optional[float] = Field(None, gt=0)
+    price: float | None = Field(None, gt=0)
+    stop_price: float | None = Field(None, gt=0)
     time_in_force: TimeInForce = TimeInForce.DAY
     status: OrderStatus = OrderStatus.PENDING
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     filled_quantity: float = 0
-    average_price: Optional[float] = None
+    average_price: float | None = None
     commission: float = 0
-    metadata: Dict[str, Any] = Field(default_factory=dict)
-    
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
     def is_active(self) -> bool:
         """Check if order is still active."""
         return self.status in [
@@ -60,7 +61,7 @@ class Order(BaseModel):
             OrderStatus.SUBMITTED,
             OrderStatus.PARTIAL
         ]
-    
+
     def is_complete(self) -> bool:
         """Check if order is complete."""
         return self.status in [
@@ -69,7 +70,7 @@ class Order(BaseModel):
             OrderStatus.REJECTED,
             OrderStatus.EXPIRED
         ]
-    
+
     def fill_percentage(self) -> float:
         """Calculate fill percentage."""
         if self.quantity == 0:

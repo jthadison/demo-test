@@ -1,13 +1,14 @@
 """Data ingestion and management module."""
 
-from typing import Protocol, Any
 from datetime import datetime
+from typing import Any, Protocol
+
 import pandas as pd
 
 
 class DataProvider(Protocol):
     """Protocol for data providers."""
-    
+
     async def fetch_historical(
         self,
         symbol: str,
@@ -17,7 +18,7 @@ class DataProvider(Protocol):
     ) -> pd.DataFrame:
         """Fetch historical market data."""
         ...
-    
+
     async def stream_realtime(
         self,
         symbols: list[str],
